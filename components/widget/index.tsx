@@ -356,7 +356,7 @@ export default function LandingPage() {
           </div>
 
           <div className="p-6 border-t border-[#e08541] text-center text-sm">
-            Web Accessibility by Digital Kahuna <Button variant="link" className="text-white underline">Learn More</Button>
+            Web Accessibility by Digital Kahunassss <Button variant="link" className="text-white underline">Learn More</Button>
           </div>
         </div>
       )}
