@@ -1,4 +1,3 @@
-'use client'
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -222,14 +221,14 @@ export default function Page() {
       {!isWidgetOpen ? (
         <Button
           onClick={toggleWidget}
-          className="fixed bottom-4 right-4 rounded-full p-2 bg-[#d07021] text-white hover:bg-[#b05e1b] focus:outline-none focus:ring-2 focus:ring-[#d07021] focus:ring-offset-2"
+          className="fixed bottom-4 right-4 rounded-full p-2 bg-[#6366f1] text-white hover:bg-[#7678F1] focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:ring-offset-2"
         >
           <Accessibility className="h-6 w-6" />
           <span className="sr-only">Open accessibility menu</span>
         </Button>
       ) : (
-        <div className="fixed top-4 right-4 w-[40vw] min-w-[300px] max-w-[600px] max-h-[calc(100vh-2rem)] bg-[#d07021] text-white rounded-lg shadow-lg font-sans flex flex-col">
-          <div className="p-6 border-b border-[#e08541]">
+        <div className="fixed top-4 right-4 w-[40vw] min-w-[300px] max-w-[600px] max-h-[calc(100vh-2rem)] bg-[#6366f1] text-white rounded-lg shadow-lg font-sans flex flex-col">
+          <div className="p-6 border-b border-[#7678F1]">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Accessibility Adjustments</h2>
               <Button variant="ghost" size="icon" onClick={toggleWidget}>
@@ -681,7 +680,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="p-6 border-t border-[#e08541] text-center text-sm">
+          <div className="p-6 border-t border-[#7678F1] text-center text-sm">
             Web Accessibility by Digital Kahuna <Button variant="link" className="text-white underline">Learn More</Button>
           </div>
         </div>
