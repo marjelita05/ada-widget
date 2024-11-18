@@ -1,34 +1,10 @@
-import React, { useState } from 'react'
-import { 
-  X, 
-  Zap, 
-  Eye, 
-  Brain, 
-  BookOpen, 
-  KeyRound, 
-  Headphones, 
-  Accessibility,
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Minus,
-  Plus,
-  Type,
-  Underline,
-  Search,
-  Link,
-  ArrowUpDown, // Using ArrowUpDown for line height instead of LineHeight
-  MoveHorizontal // Using MoveHorizontal for letter spacing
-} from 'lucide-react'
-import { Switch } from "@/components/ui/switch"
+'use client'
+
+import { useState } from 'react'
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
+import { X, RotateCcw, MessageSquare, EyeOff, Search, Zap, Eye, Layout, Brain, Keyboard, Mic, Type, Underline, LinkIcon, AlignLeft, AlignCenter, AlignRight, ArrowUpDown, MoveHorizontal, Minus, Plus, Accessibility, Moon, Sun, SunMoon, Droplet, VolumeX, ImageOff, FileText, MousePointer2, Link2, ZapOff, LayoutTemplate, Hash, Target, HandMetal } from 'lucide-react'
 
 type Profile = 'seizureSafe' | 'visionImpaired' | 'adhdFriendly' | 'cognitiveDisability' | 'keyboardNavigation' | 'blindUsers'
 
@@ -65,32 +41,79 @@ const initialContentAdjustments: ContentAdjustments = {
   letterSpacing: 100,
 }
 
-function getProfileDescription(profile: Profile): string {
-  switch (profile) {
-    case 'seizureSafe': return 'Clear flashes & reduces color'
-    case 'visionImpaired': return 'Enhances website\'s visuals'
-    case 'adhdFriendly': return 'More focus & fewer distractions'
-    case 'cognitiveDisability': return 'Assists with reading & focusing'
-    case 'keyboardNavigation': return 'Use website with the keyboard'
-    case 'blindUsers': return 'Optimize website for screen-readers'
-  }
+interface ColorAdjustments {
+  contrast: 'dark' | 'light' | 'high' | null
+  saturation: 'high' | 'monochrome' | 'low' | null
+  textColor: string
+  titleColor: string
+  backgroundColor: string
 }
+
+const initialColorAdjustments: ColorAdjustments = {
+  contrast: null,
+  saturation: null,
+  textColor: '#000000',
+  titleColor: '#000000',
+  backgroundColor: '#ffffff'
+}
+
+interface OrientationAdjustments {
+  muteSounds: boolean
+  hideImages: boolean
+  readMode: boolean
+  readingGuide: boolean
+  stopAnimations: boolean
+  readingMask: boolean
+  highlightHover: boolean
+  highlightFocus: boolean
+  bigBlackCursor: boolean
+  bigWhiteCursor: boolean
+  usefulLink: string | null
+}
+
+const initialOrientationAdjustments: OrientationAdjustments = {
+  muteSounds: false,
+  hideImages: false,
+  readMode: false,
+  readingGuide: false,
+  stopAnimations: false,
+  readingMask: false,
+  highlightHover: false,
+  highlightFocus: false,
+  bigBlackCursor: false,
+  bigWhiteCursor: false,
+  usefulLink: null
+}
+
+const colorOptions = [
+  { value: '#3b82f6', label: 'Blue' },
+  { value: '#8b5cf6', label: 'Purple' },
+  { value: '#ef4444', label: 'Red' },
+  { value: '#f97316', label: 'Orange' },
+  { value: '#14b8a6', label: 'Teal' },
+  { value: '#84cc16', label: 'Green' },
+  { value: '#ffffff', label: 'White' },
+  { value: '#000000', label: 'Black' },
+]
 
 const profileIcons: Record<Profile, React.ReactNode> = {
   seizureSafe: <Zap className="h-6 w-6" />,
   visionImpaired: <Eye className="h-6 w-6" />,
-  adhdFriendly: <Brain className="h-6 w-6" />,
-  cognitiveDisability: <BookOpen className="h-6 w-6" />,
-  keyboardNavigation: <KeyRound className="h-6 w-6" />,
-  blindUsers: <Headphones className="h-6 w-6" />,
+  adhdFriendly: <Layout className="h-6 w-6" />,
+  cognitiveDisability: <Brain className="h-6 w-6" />,
+  keyboardNavigation: <Keyboard className="h-6 w-6" />,
+  blindUsers: <Mic className="h-6 w-6" />,
 }
 
-export default function LandingPage() {
+export default function Page() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false)
   const [profiles, setProfiles] = useState(initialProfiles)
   const [contentAdjustments, setContentAdjustments] = useState<ContentAdjustments>(initialContentAdjustments)
+  const [colorAdjustments, setColorAdjustments] = useState<ColorAdjustments>(initialColorAdjustments)
+  const [orientationAdjustments, setOrientationAdjustments] = useState<OrientationAdjustments>(initialOrientationAdjustments)
 
   const toggleWidget = () => setIsWidgetOpen(prev => !prev)
+  
   const toggleProfile = (profile: Profile) => {
     setProfiles(prev => ({ ...prev, [profile]: !prev[profile] }))
   }
@@ -123,25 +146,74 @@ export default function LandingPage() {
     }))
   }
 
+  const setContrast = (value: ColorAdjustments['contrast']) => {
+    setColorAdjustments(prev => ({
+      ...prev,
+      contrast: prev.contrast === value ? null : value
+    }))
+  }
+
+  const setSaturation = (value: ColorAdjustments['saturation']) => {
+    setColorAdjustments(prev => ({
+      ...prev,
+      saturation: prev.saturation === value ? null : value
+    }))
+  }
+
+  const setColor = (type: 'textColor' | 'titleColor' | 'backgroundColor', color: string) => {
+    setColorAdjustments(prev => ({
+      ...prev,
+      [type]: color
+    }))
+  }
+
+  const toggleOrientation = (key: keyof OrientationAdjustments) => {
+    if (key === 'bigBlackCursor' && orientationAdjustments.bigWhiteCursor) {
+      setOrientationAdjustments(prev => ({ ...prev, bigWhiteCursor: false }))
+    } else if (key === 'bigWhiteCursor' && orientationAdjustments.bigBlackCursor) {
+      setOrientationAdjustments(prev => ({ ...prev, bigBlackCursor: false }))
+    }
+    
+    setOrientationAdjustments(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
+  }
+
+  const setOrientationLink = (value: string) => {
+    setOrientationAdjustments(prev => ({
+      ...prev,
+      usefulLink: value || null
+    }))
+  }
+
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
-      <main className="container mx-auto px-4 py-16 text-center">
-        <h1 className="text-6xl font-bold mb-4">
-          <span className="text-[#5D4FE5]">Aut</span> Your Business
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative">
+      <main className="max-w-4xl mx-auto text-center">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+          <span className="text-[#6366f1]">Aut</span> Your Business
         </h1>
-        <h1 className="text-6xl font-bold mb-8">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
           Faster
         </h1>
-        <p className="text-xl mb-8">
-          Advanced <span className="text-[#5D4FE5]">Systems</span> Integration and <span className="text-[#5D4FE5]">Automation</span> for the<br />
-          purposes of <span className="text-[#5D4FE5]">Scaling</span> any business
+        
+        <p className="text-lg md:text-xl mb-12 text-gray-800">
+          Advanced <span className="text-[#6366f1]">Systems</span> Integration and{" "}
+          <span className="text-[#6366f1]">Automation</span> for the purposes of{" "}
+          <span className="text-[#6366f1]">Scaling</span> any business
         </p>
-        <div className="space-y-4">
-          <Button className="bg-[#5D4FE5] hover:bg-[#4A3ED4] text-white px-8 py-3 rounded-full text-lg">
+
+        <div className="flex flex-col items-center gap-4">
+          <Button 
+            className="h-12 px-8 text-lg bg-[#6366f1] hover:bg-[#5558e6] text-white rounded-full"
+          >
             Book A No-Pressure Call Now
           </Button>
-          <br />
-          <Button variant="outline" className="border-[#5D4FE5] text-[#5D4FE5] hover:bg-[#5D4FE5] hover:text-white px-8 py-3 rounded-full text-lg">
+          
+          <Button 
+            variant="outline"
+            className="h-12 px-8 text-lg border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1]/5 rounded-full"
+          >
             Link Tree
           </Button>
         </div>
@@ -167,24 +239,48 @@ export default function LandingPage() {
             </div>
 
             <div className="flex space-x-4 mb-6">
-              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]" onClick={() => setContentAdjustments(initialContentAdjustments)}>Reset Settings</Button>
-              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]">Statement</Button>
-              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]">Hide Interface</Button>
+              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset Settings
+              </Button>
+              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Statement
+              </Button>
+              <Button variant="secondary" size="sm" className="bg-[rgba(53,47,229,0.7)] hover:bg-[rgba(53,47,229,0.8)]">
+                <EyeOff className="mr-2 h-4 w-4" />
+                Hide Interface
+              </Button>
             </div>
 
-            <Select>
-              <SelectTrigger className="w-full bg-[rgba(53,47,229,0.7)]">
-                <SelectValue placeholder="Unclear content? Search in dictionary..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="option1">Option 1</SelectItem>
-                <SelectItem value="option2">Option 2</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input 
+                className="w-full pl-10 bg-[rgba(53,47,229,0.7)] border-none text-white placeholder-gray-300"
+                placeholder="Unclear content? Search in dictionary..."
+              />
+            </div>
           </div>
 
           <div className="flex-grow overflow-y-auto p-6">
             <div className="bg-white text-black p-6 rounded-lg space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold mb-4">Choose the right accessibility profile for you</h3>
+
+                {(Object.keys(profiles) as Profile[]).map((profile) => (
+                  <div key={profile} className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
+                    <div className="flex items-center space-x-3">
+                      {profileIcons[profile]}
+                      <div>
+                        <div className="font-semibold">{profile.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</div>
+                        <div className="text-sm text-gray-600">{getProfileDescription(profile)}</div>
+                      </div>
+                    </div>
+                    <Switch checked={profiles[profile]} onCheckedChange={() => toggleProfile(profile)} />
+                  </div>
+                ))}
+              </div>
+
               <div className="space-y-4">
                 <h3 className="text-xl font-bold">Content Adjustments</h3>
                 
@@ -231,7 +327,7 @@ export default function LandingPage() {
 
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Link className="h-5 w-5" />
+                      <LinkIcon className="h-5 w-5" />
                       <span>Highlight Links</span>
                     </div>
                     <Switch 
@@ -314,8 +410,6 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  
-
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <MoveHorizontal className="h-5 w-5" />
@@ -337,29 +431,272 @@ export default function LandingPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-xl font-bold mb-4">Choose the right accessibility profile for you</h3>
+                <h3 className="text-xl font-bold">Color Adjustments</h3>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <Button
+                    variant={colorAdjustments.contrast === 'dark' ? 'default' : 'outline'}
+                    onClick={() => setContrast('dark')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <Moon className="h-8 w-8" />
+                    <span>Dark Contrast</span>
+                  </Button>
+                  
+                  <Button
+                    variant={colorAdjustments.contrast === 'light' ? 'default' : 'outline'}
+                    onClick={() => setContrast('light')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <Sun className="h-8 w-8" />
+                    <span>Light Contrast</span>
+                  </Button>
+                  
+                  <Button
+                    variant={colorAdjustments.contrast === 'high' ? 'default' : 'outline'}
+                    onClick={() => setContrast('high')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <SunMoon className="h-8 w-8" />
+                    <span>High Contrast</span>
+                  </Button>
+                </div>
 
-                {(Object.keys(profiles) as Profile[]).map((profile) => (
-                  <div key={profile} className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
-                    <div className="flex items-center space-x-3">
-                      {profileIcons[profile]}
-                      <div>
-                        <div className="font-semibold">{profile.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</div>
-                        <div className="text-sm text-gray-600">{getProfileDescription(profile)}</div>
-                      </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <Button
+                    variant={colorAdjustments.saturation === 'high' ? 'default' : 'outline'}
+                    onClick={() => setSaturation('high')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <Droplet className="h-8 w-8 fill-current" />
+                    <span>High Saturation</span>
+                  </Button>
+                  
+                  <Button
+                    variant={colorAdjustments.saturation === 'monochrome' ? 'default' : 'outline'}
+                    onClick={() => setSaturation('monochrome')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <Droplet className="h-8 w-8" />
+                    <span>Monochrome</span>
+                  </Button>
+                  
+                  <Button
+                    variant={colorAdjustments.saturation === 'low' ? 'default' : 'outline'}
+                    onClick={() => setSaturation('low')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto"
+                  >
+                    <Droplet className="h-8 w-8 opacity-50" />
+                    <span>Low Saturation</span>
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Adjust Text Colors</h4>
+                    <div className="flex gap-2 flex-wrap">
+                      {colorOptions.map((color) => (
+                        <Button
+                          key={color.value}
+                          variant="outline"
+                          className="w-8 h-8 rounded-full p-0"
+                          style={{ backgroundColor: color.value, border: color.value === '#ffffff' ? '1px solid #e2e8f0' : 'none' }}
+                          onClick={() => setColor('textColor', color.value)}
+                        >
+                          <span className="sr-only">Set text color to {color.label}</span>
+                        </Button>
+                      ))}
+                      <Button
+                        variant="outline"
+                        className="text-sm"
+                        onClick={() => setColor('textColor', initialColorAdjustments.textColor)}
+                      >
+                        Cancel
+                      </Button>
                     </div>
-                    <Switch checked={profiles[profile]} onCheckedChange={() => toggleProfile(profile)} />
                   </div>
-                ))}
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Adjust Title Colors</h4>
+                    <div className="flex gap-2 flex-wrap">
+                      {colorOptions.map((color) => (
+                        <Button
+                          key={color.value}
+                          variant="outline"
+                          className="w-8 h-8 rounded-full p-0"
+                          style={{ backgroundColor: color.value, border: color.value === '#ffffff' ? '1px solid #e2e8f0' : 'none' }}
+                          onClick={() => setColor('titleColor', color.value)}
+                        >
+                          <span className="sr-only">Set title color to {color.label}</span>
+                        </Button>
+                      ))}
+                      <Button
+                        variant="outline"
+                        className="text-sm"
+                        onClick={() => setColor('titleColor', initialColorAdjustments.titleColor)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Adjust Background Colors</h4>
+                    <div className="flex gap-2 flex-wrap">
+                      {colorOptions.map((color) => (
+                        <Button
+                          key={color.value}
+                          variant="outline"
+                          className="w-8 h-8 rounded-full p-0"
+                          style={{ backgroundColor: color.value, border: color.value === '#ffffff' ? '1px solid #e2e8f0' : 'none' }}
+                          onClick={() => setColor('backgroundColor', color.value)}
+                        >
+                          <span className="sr-only">Set background color to {color.label}</span>
+                        </Button>
+                      ))}
+                      <Button
+                        variant="outline"
+                        className="text-sm"
+                        onClick={() => setColor('backgroundColor', initialColorAdjustments.backgroundColor)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold">Orientation Adjustments</h3>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <Button
+                    variant={orientationAdjustments.muteSounds ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('muteSounds')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <VolumeX className="h-8 w-8" />
+                    <span>Mute Sounds</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.hideImages ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('hideImages')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <ImageOff className="h-8 w-8" />
+                    <span>Hide Images</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.readMode ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('readMode')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <FileText className="h-8 w-8" />
+                    <span>Read Mode</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.readingGuide ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('readingGuide')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <MousePointer2 className="h-8 w-8" />
+                    <span>Reading Guide</span>
+                  </Button>
+                  
+                  <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Link2 className="h-6 w-6" />
+                      <span className="text-lg">Useful Links</span>
+                    </div>
+                    <select 
+                      className="w-full p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary"
+                      value={orientationAdjustments.usefulLink || ''}
+                      onChange={(e) => setOrientationLink(e.target.value)}
+                    >
+                      <option value="">Select an option</option>
+                      <option value="sitemap">Sitemap</option>
+                      <option value="contact">Contact Form</option>
+                      <option value="help">Help Center</option>
+                    </select>
+                  </div>
+                  
+                  <Button
+                    variant={orientationAdjustments.stopAnimations ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('stopAnimations')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <ZapOff className="h-8 w-8" />
+                    <span>Stop Animations</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.readingMask ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('readingMask')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <LayoutTemplate className="h-8 w-8" />
+                    <span>Reading Mask</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.highlightHover ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('highlightHover')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <Hash className="h-8 w-8" />
+                    <span>Highlight Hover</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.highlightFocus ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('highlightFocus')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <Target className="h-8 w-8" />
+                    <span>Highlight Focus</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.bigBlackCursor ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('bigBlackCursor')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <HandMetal className="h-8 w-8" />
+                    <span>Big Black Cursor</span>
+                  </Button>
+                  
+                  <Button
+                    variant={orientationAdjustments.bigWhiteCursor ? 'default' : 'outline'}
+                    onClick={() => toggleOrientation('bigWhiteCursor')}
+                    className="flex flex-col items-center gap-2 p-4 h-auto aspect-square bg-gray-50"
+                  >
+                    <HandMetal className="h-8 w-8 text-gray-400" />
+                    <span>Big White Cursor</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="p-6 border-t border-[#e08541] text-center text-sm">
-            Web Accessibility by Digital Kahuna ra cguro <Button variant="link" className="text-white underline">Learn More</Button>
+            Web Accessibility by Digital Kahuna <Button variant="link" className="text-white underline">Learn More</Button>
           </div>
         </div>
       )}
     </div>
   )
+}
+
+function getProfileDescription(profile: Profile): string {
+  switch (profile) {
+    case 'seizureSafe': return 'Clear flashes & reduces color'
+    case 'visionImpaired': return 'Enhances website\'s visuals'
+    case 'adhdFriendly': return 'More focus & fewer distractions'
+    case 'cognitiveDisability': return 'Assists with reading & focusing'
+    case 'keyboardNavigation': return 'Use website with the keyboard'
+    case 'blindUsers': return 'Optimize website for screen-readers'
+  }
 }
